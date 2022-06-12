@@ -2,6 +2,7 @@ package com.example.testhexagongame.hexagon.center
 
 import androidx.compose.ui.graphics.Color
 import com.example.testhexagongame.tiles.tile.Triangle
+import com.example.testhexagongame.ui.theme.GRAY_BASE
 
 class HexagonCenter: Region {
 
@@ -9,7 +10,7 @@ class HexagonCenter: Region {
 
     override fun check(): Boolean {
         val color = triangles[0]?.getColor()
-        if (color == "#616161") return false
+        if (color == GRAY_BASE) return false
         for (triangle in triangles) {
             if (triangle?.getColor() != color) return false
         }
@@ -22,6 +23,6 @@ class HexagonCenter: Region {
     }
 
     override fun empty() {
-        triangles.forEach { triangle -> triangle?.setColor("#616161") }
+        triangles.forEach { triangle -> triangle?.setColor(GRAY_BASE) }
     }
 }

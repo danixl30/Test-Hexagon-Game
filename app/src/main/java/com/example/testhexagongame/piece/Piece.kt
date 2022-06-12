@@ -1,12 +1,15 @@
-package com.example.testhexagongame.tiles.tile
+package com.example.testhexagongame.piece
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.intellij.lang.annotations.JdkConstants
+import androidx.compose.ui.unit.dp
+import com.example.testhexagongame.tiles.tile.Triangle
 
 class Piece(private val triangle: Triangle) {
     fun flip() {
@@ -35,14 +38,15 @@ class Piece(private val triangle: Triangle) {
             modifier = Modifier.clickable { flip() }
         ) {
             Row() {
-                triangle.GraphicItem {}
-                triangle.right?.GraphicItem {}
-                triangle.right?.right?.GraphicItem {}
+                triangle.GraphicItem(null)
+                triangle.right?.GraphicItem(null)
+                triangle.right?.right?.GraphicItem(null)
             }
+            Spacer(modifier = Modifier.height(14.dp))
             Row() {
-                triangle.base?.GraphicItem {}
-                triangle.base?.right?.GraphicItem {}
-                triangle.base?.right?.right?.GraphicItem {}
+                triangle.base?.GraphicItem(null)
+                triangle.base?.right?.GraphicItem(null)
+                triangle.base?.right?.right?.GraphicItem(null)
             }
 
         }

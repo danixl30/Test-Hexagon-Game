@@ -11,5 +11,5 @@ interface TileModel{
     var isFlipped: Boolean
 
     @Composable
-    fun GraphicItem(onChage: () -> Unit)
+    fun GraphicItem(onChage: (() -> Unit)?)
 }
