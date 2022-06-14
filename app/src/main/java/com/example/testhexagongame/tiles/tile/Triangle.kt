@@ -65,19 +65,10 @@ class Triangle(
             ) {
                 val rect = Rect(Offset.Zero, size)
                 val trianglePath = Path().apply {
-/*
-                    val height = size.height
-                    val width = size.width
-*/
                     moveTo(rect.topCenter)
                     lineTo(rect.bottomRight)
                     lineTo(rect.bottomLeft)
                     close()
-/*
-                    moveTo((width) / 2.0f, 0f)
-                    lineTo(width, height  )
-                    lineTo(0f, height)
-*/
                 }
                 drawIntoCanvas { canvas ->
                     canvas.drawOutline(
@@ -88,16 +79,6 @@ class Triangle(
                         }
                     )
                 }
-/*
-                drawPath(
-                    trianglePath,
-                    colorRender.value,
-                    style = Stroke(
-                        width = 2.dp.toPx(),
-                        pathEffect = PathEffect.cornerPathEffect(4.dp.toPx())
-                    )
-                )
-*/
             }
         }
     }

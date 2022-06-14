@@ -9,12 +9,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.testhexagongame.dragAndDrop.LongPressDraggable
 import com.example.testhexagongame.hexagon.center.HexagonCenter
 import com.example.testhexagongame.hexagon.center.HexagonCenterFactory
 import com.example.testhexagongame.piece.PieceFactory
 import com.example.testhexagongame.tiles.tile.TilesFactory
 import com.example.testhexagongame.tiles.tile.Triangle
 import com.example.testhexagongame.ui.theme.TestHexagonGameTheme
+import kotlin.coroutines.suspendCoroutine
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,36 +99,38 @@ fun RenderHexagon() {
         listCenters.forEach { hexagonCenter -> hexagonCenter.empty() }
     }
     TestHexagonGameTheme {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            for (i in 1..3) {
-                Row() {
-                    RenderRow(triangle = temp) { onChangeColor() }
+        LongPressDraggable(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                for (i in 1..3) {
+                    Row() {
+                        RenderRow(triangle = temp) { onChangeColor() }
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    if (temp?.base?.left == null) {
+                        temp = temp?.base as Triangle?
+                        break
+                    }
+                    temp = temp?.base?.left as Triangle?
                 }
-                Spacer(modifier = Modifier.height(14.dp))
-                if (temp?.base?.left == null) {
-                    temp = temp?.base as Triangle?
-                    break
+                for (i in 1..3) {
+                    Row() {
+                        RenderRow(triangle = temp) { onChangeColor() }
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    temp = temp?.right?.base as Triangle?
                 }
-                temp = temp?.base?.left as Triangle?
-            }
-            for (i in 1..3) {
-                Row() {
-                    RenderRow(triangle = temp) { onChangeColor() }
+                Spacer(modifier = Modifier.height(40.dp))
+                Row {
+                    piece1.GraphicComponent()
+                    Spacer(modifier = Modifier.width(20.dp))
+                    piece2.GraphicComponent()
+                    Spacer(modifier = Modifier.width(20.dp))
+                    piece3.GraphicComponent()
                 }
-                Spacer(modifier = Modifier.height(14.dp))
-                temp = temp?.right?.base as Triangle?
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            Row {
-                piece1.GraphicComponent()
-                Spacer(modifier = Modifier.width(20.dp))
-                piece2.GraphicComponent()
-                Spacer(modifier = Modifier.width(20.dp))
-                piece3.GraphicComponent()
             }
         }
     }

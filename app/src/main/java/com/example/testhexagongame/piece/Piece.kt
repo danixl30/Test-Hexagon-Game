@@ -1,14 +1,12 @@
 package com.example.testhexagongame.piece
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.testhexagongame.dragAndDrop.DragTarget
 import com.example.testhexagongame.tiles.tile.Triangle
 
 class Piece(private val triangle: Triangle) {
@@ -33,6 +31,13 @@ class Piece(private val triangle: Triangle) {
 
     @Composable
     fun GraphicComponent() {
+        DragTarget(dataToDrop = triangle, modifier = Modifier.size(110.dp)) {
+            HexagonRen()
+        }
+    }
+
+    @Composable
+    fun HexagonRen() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable { flip() }
@@ -48,7 +53,6 @@ class Piece(private val triangle: Triangle) {
                 triangle.base?.right?.GraphicItem(null)
                 triangle.base?.right?.right?.GraphicItem(null)
             }
-
         }
     }
 }
