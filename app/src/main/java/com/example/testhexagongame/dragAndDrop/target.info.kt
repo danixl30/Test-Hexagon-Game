@@ -12,4 +12,5 @@ internal class DragTargetInfo {
     var dragOffset by mutableStateOf(Offset.Zero)
     var draggableComposable by mutableStateOf<(@Composable () -> Unit)?>(null)
     var dataToDrop by mutableStateOf<Any?>(null)
+    var elIndex by mutableStateOf(0)
 }

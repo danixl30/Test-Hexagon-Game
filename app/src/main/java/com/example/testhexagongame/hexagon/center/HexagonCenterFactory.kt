@@ -1,45 +1,41 @@
 package com.example.testhexagongame.hexagon.center
 
-import com.example.testhexagongame.tiles.tile.Triangle
+import com.example.testhexagongame.Factories.Factory
+import com.example.testhexagongame.tiles.tile.Box
+import com.example.testhexagongame.tiles.tile.Shape.Shape
+import com.example.testhexagongame.tiles.tile.Shape.TriangleShape
 
-class HexagonCenterFactory(private val triangle: Triangle) {
+class HexagonCenterFactory2(private val triangle: Box<TriangleShape>?): Factory<ArrayList<HexagonCenter2>> {
 
-    private var hexagonCenters: ArrayList<HexagonCenter> = ArrayList()
+    private var hexagonCenters: ArrayList<HexagonCenter2> = ArrayList()
 
-    private fun checkRow(triangle: Triangle?) {
-        if (triangle == null) return
-        val center = HexagonCenter()
-        center.addTriangle(triangle)
-        center.addTriangle(triangle.right as Triangle?)
-        center.addTriangle(triangle.right?.base as Triangle?)
-        center.addTriangle(triangle.right?.base?.left as Triangle?)
-        center.addTriangle(triangle.left as Triangle?)
-        center.addTriangle(triangle.left?.base as Triangle?)
+    private fun checkRow(triangle: Box<TriangleShape>?) {
+        if (triangle?.getAdjacent("right") == null) return
+        val center = HexagonCenter2()
+        val triangles = triangle.getByRoute(mutableListOf("right", "right", "base", "left", "left"))
+        if (triangles.size < 6) return
+        triangles.forEach { e -> center.addTriangle(e as Box<Shape>) }
         hexagonCenters.add(center)
-        checkRow(triangle.right?.right as Triangle?)
+        checkRow(triangle.getAdjacent("right")?.getAdjacent("right"))
     }
 
     private fun searchCol() {
-        var temp = triangle as Triangle?
+        var temp = triangle
         for (i in 1..3) {
-            checkRow(temp?.right as Triangle?)
-            if (temp?.base?.left == null) {
-                temp = temp?.base as Triangle?
+            checkRow(temp)
+            if (temp?.getAdjacent("base")?.getAdjacent("left") == null) {
+                temp = temp?.getAdjacent("base")
                 break
             }
-            temp = temp.base?.left as Triangle?
+            temp = temp.getAdjacent("base")?.getAdjacent("left")
         }
-        temp = temp?.right as Triangle?
         for (i in 1..3) {
-            if (temp?.left != null) {
-                temp = temp.left as Triangle?
-            }
-            checkRow(temp?.right as Triangle?)
-            temp = temp?.right?.base as Triangle?
+            checkRow(temp?.getAdjacent("right"))
+            temp = temp?.getAdjacent("right")?.getAdjacent("base")
         }
     }
 
-    fun create(): ArrayList<HexagonCenter> {
+    override fun create(): ArrayList<HexagonCenter2> {
         searchCol()
         return hexagonCenters
     }

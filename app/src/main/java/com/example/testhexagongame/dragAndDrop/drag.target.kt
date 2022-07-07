@@ -10,14 +10,19 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
+
 @Composable
 fun <T> DragTarget(
     modifier: Modifier = Modifier,
     dataToDrop: T,
-    content: @Composable (() -> Unit)
+    elPos: Int,
+    content: @Composable (() -> Unit),
 ) {
     var currentPosition by remember { mutableStateOf(Offset.Zero) }
     val currentState = LocalDragTargetInfo.current
+    val offsetBase = Offset.Zero
+
+    if (currentState.isDragging && currentState.elIndex == elPos && currentState.dataToDrop != dataToDrop) currentState.dataToDrop = dataToDrop
 
     Box(modifier = modifier
         .onGloballyPositioned {
@@ -27,6 +32,7 @@ fun <T> DragTarget(
             detectDragGesturesAfterLongPress(onDragStart = {
                 currentState.dataToDrop = dataToDrop
                 currentState.isDragging = true
+                currentState.elIndex = elPos
                 currentState.dragPosition = currentPosition + it
                 currentState.draggableComposable = content
             }, onDrag = { change, dragAmount ->
@@ -34,10 +40,12 @@ fun <T> DragTarget(
                 currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
             }, onDragEnd = {
                 currentState.isDragging = false
-                currentState.dragOffset = Offset.Zero
+                currentState.elIndex = 0
+                currentState.dragOffset = offsetBase
             }, onDragCancel = {
-                currentState.dragOffset = Offset.Zero
                 currentState.isDragging = false
+                currentState.elIndex = 0
+                currentState.dragOffset = offsetBase
             })
         }) {
         content()
