@@ -50,3 +50,5 @@ fun RenderTriangle(triangle: Box<TriangleShape>) {
         }
     }
 }
+fun Path.moveTo(offset: Offset) = moveTo(offset.x, offset.y)
+fun Path.lineTo(offset: Offset) = lineTo(offset.x, offset.y)

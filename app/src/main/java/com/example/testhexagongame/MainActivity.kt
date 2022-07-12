@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.testhexagongame.Game.GameScreen2
 import com.example.testhexagongame.Routes.RouterManager
 import com.example.testhexagongame.ui.theme.*
 
@@ -28,4 +27,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    RouterManager()
 }
