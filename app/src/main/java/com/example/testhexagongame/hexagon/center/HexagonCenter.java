@@ -11,25 +11,25 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class HexagonCenter<T extends Shape2> implements Region {
-    private ArrayList<Box2<T>> triangles = new ArrayList<>();
+    private final ArrayList<Box2<T, String>> triangles = new ArrayList<>();
     @Override
     public boolean check() {
-        String color = triangles.get(0).getColor();
+        String color = triangles.get(0).getData();
         if (Objects.equals(color, GRAY_BASE)) return false;
-        for (Box2<T> triangle : triangles) {
-            if (!Objects.equals(triangle.getColor(), color)) return false;
+        for (Box2<T, String> triangle : triangles) {
+            if (!Objects.equals(triangle.getData(), color)) return false;
         }
         return true;
     }
 
-    public void addTriangle(Box2<T> triangle) {
+    public void addTriangle(Box2<T, String> triangle) {
         if (triangles.size() < 6) triangles.add(triangle);
     }
 
     @Override
     public void empty() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            triangles.forEach(e -> e.setColor(GRAY_BASE));
+            triangles.forEach(e -> e.setData(GRAY_BASE));
         }
     }
 }

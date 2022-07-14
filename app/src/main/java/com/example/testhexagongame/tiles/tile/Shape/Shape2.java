@@ -6,8 +6,8 @@ import com.example.testhexagongame.tiles.tile.Box2;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class Shape2<T extends Shape2> {
-    private final HashMap<String, Box2<T>> sides = new HashMap<>();
+public abstract class Shape2<T extends Shape2, U> {
+    private final HashMap<String, Box2<T, U>> sides = new HashMap<>();
     protected final ArrayList<String> sidesRules = new ArrayList<>();
     protected final ArrayList<Integer> rotations = new ArrayList<>();
     private Integer currentRotation = 0;
@@ -29,12 +29,12 @@ public abstract class Shape2<T extends Shape2> {
         return currentRotation;
     }
 
-    public void setAdjacent(String side, Box2<T> node) {
+    public void setAdjacent(String side, Box2<T, U> node) {
         if (!sidesRules.contains(side)) return;
         sides.put(side, node);
     }
 
-    public Box2<T> getSide(String side) {
+    public Box2<T, U> getSide(String side) {
         return sides.get(side);
     }
 }
