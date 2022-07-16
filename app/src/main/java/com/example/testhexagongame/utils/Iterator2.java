@@ -1,12 +1,12 @@
 package com.example.testhexagongame.utils;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class Iterator<T> {
-    private List<T> elements;
+public class Iterator2<T> {
+    private ArrayList<T> elements;
     private int index;
 
-    public Iterator(List<T> elements) {
+    public Iterator2(ArrayList<T> elements) {
         this.elements = elements;
         this.index = 0;
     }
