@@ -2,22 +2,22 @@ package com.example.testhexagongame.utils;
 
 import java.util.List;
 
-public class Iterator<T> {
-    private List<T> elements;
+public class Iterator2<T> {
+    private final List<T> elements;
     private int index;
 
-    public Iterator(List<T> elements) {
+    public Iterator2(List<T> elements) {
         this.elements = elements;
         this.index = 0;
     }
 
-    boolean hasNext() {
+    public boolean hasNext() {
         return elements.size() > index;
     }
-    T getNext() {
+    public T getNext() {
         return elements.get(index++);
     }
-    void reset(){
+    public void reset(){
         index = 0;
     }
 }
