@@ -23,7 +23,7 @@ fun <T> DropTarget(
 
     Box(modifier = modifier.onGloballyPositioned {
         it.boundsInWindow().let { rect ->
-            isCurrentDropTarget = rect.contains(dragPosition + dragOffset + if (dragInfo.isDragging) Offset(0f, -420f) else Offset(0f, 0f))
+            isCurrentDropTarget = rect.contains(dragPosition + dragOffset + if (dragInfo.isDragging) Offset(0f, -300f) else Offset(0f, 0f))
         }
     }) {
         var data =

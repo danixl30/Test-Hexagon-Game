@@ -15,20 +15,18 @@ public class HexagonCenterFactory implements Factory<ArrayList<HexagonCenter<Tri
 
     private final ArrayList<HexagonCenter<Triangle>> centers = new ArrayList<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void checkRow(Box2<Triangle, String> triangle) {
-        if (triangle.getAdjacent("right") == null || triangle.getRotation() == 180) { return; }
-        HexagonCenter<Triangle> center = new HexagonCenter<>();
         ArrayList<String> path = new ArrayList<>();
         path.add("right");path.add("right");path.add("base");path.add("left");path.add("left");
         ArrayList<Box2<Triangle, String>> triangles = triangle.getByRoute(path);
-        if (triangles.size() < 6) return;
-        triangles.forEach(center::addTriangle);
-        centers.add(center);
-        checkRow(triangle.getAdjacent("right"));
+        if (triangles.size() == 6 && triangle.getRotation() == 0) {
+            HexagonCenter<Triangle> center = new HexagonCenter<>();
+            triangles.forEach(center::addTriangle);
+            centers.add(center);
+        }
+        if (triangle.getAdjacent("right") != null) checkRow(triangle.getAdjacent("right"));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void searchCol() {
         Box2<Triangle, String> temp = triangle;
         for (int i = 1; i <= 3; i++) {
@@ -49,7 +47,6 @@ public class HexagonCenterFactory implements Factory<ArrayList<HexagonCenter<Tri
         this.triangle = triangle;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public ArrayList<HexagonCenter<Triangle>> create() {
         searchCol();

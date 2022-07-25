@@ -11,22 +11,22 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
-import com.example.testhexagongame.tiles.tile.Shape.TriangleShape
+import com.example.testhexagongame.tiles.tile.Shape.Triangle
 import com.example.testhexagongame.utils.parseColor
 
 @Composable
-fun RenderTriangle(triangle: Box<TriangleShape>) {
+fun RenderTriangle2(triangle: Box2<Triangle, String>) {
     var colorRender by remember {
-        mutableStateOf(triangle.getColor())
+        mutableStateOf(triangle.data)
     }
     val onChangeColor: (String) -> Unit = {
             newColor: String -> colorRender = newColor
     }
-    triangle.subscribeColorChange(onChangeColor)
-    if (triangle.getColor() != colorRender) colorRender = triangle.getColor()
+    triangle.subscribeOnDataChange(onChangeColor)
+    if (triangle.data != colorRender) colorRender = triangle.data
     Box() {
         Canvas(
-            modifier = if (triangle.getRotation() == 0) Modifier.size(35.dp)
+            modifier = if (triangle.rotation == 0) Modifier.size(35.dp)
             else Modifier
                 .size(35.dp)
                 .rotate(180F)

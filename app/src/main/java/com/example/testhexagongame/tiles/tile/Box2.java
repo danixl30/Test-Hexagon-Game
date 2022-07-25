@@ -25,7 +25,7 @@ public class Box2<T extends Shape2, U> {
         this.data.setValue(data);
     }
 
-    public void subscribeOnColorChange(Function1<U, Unit> callback) {
+    public void subscribeOnDataChange(Function1<U, Unit> callback) {
         data.subscribe(callback);
     }
 
@@ -56,5 +56,9 @@ public class Box2<T extends Shape2, U> {
         ArrayList nodes = next.getByRoute(path);
         list.addAll(nodes);
         return list;
+    }
+
+    public ArrayList<Box2<T, U>> getAdjacents() {
+        return shape.getAdjacents();
     }
 }

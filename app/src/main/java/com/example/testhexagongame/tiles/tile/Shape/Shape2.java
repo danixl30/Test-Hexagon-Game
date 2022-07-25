@@ -37,4 +37,8 @@ public abstract class Shape2<T extends Shape2, U> {
     public Box2<T, U> getSide(String side) {
         return sides.get(side);
     }
+
+    public ArrayList<Box2<T, U>> getAdjacents() {
+        return new ArrayList<>(sides.values());
+    }
 }

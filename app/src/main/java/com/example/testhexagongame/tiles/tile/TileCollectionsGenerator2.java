@@ -13,17 +13,17 @@ public class TileCollectionsGenerator2 {
 
     private Iterator2<Box2<Triangle,String>> setRow(Box2<Triangle,String> triangle){
         Box2<Triangle,String> temp = triangle;
-        ArrayList<Box2<Triangle,String>> list = new ArrayList<Box2<Triangle,String>>();
+        ArrayList<Box2<Triangle,String>> list = new ArrayList<>();
         while(temp != null){
             list.add(temp);
             if(temp.getAdjacent("right") == null) break;
             temp = temp.getAdjacent("right");
         }
-        return new Iterator2(list);
+        return new Iterator2<>(list);
     }
-    private Iterator2<Iterator2<Box2<Triangle,String>>> setRow(){
+    private Iterator2<Iterator2<Box2<Triangle,String>>> setCol(){
         Box2<Triangle,String> temp = triangle;
-        ArrayList<Iterator2<Box2<Triangle,String>>> inters = new ArrayList<Iterator2<Box2<Triangle,String>>>();
+        ArrayList<Iterator2<Box2<Triangle,String>>> inters = new ArrayList<>();
         for(int i = 1; i <= 3; i++){
             Iterator2<Box2<Triangle,String>> inter = setRow(temp);
             inters.add(inter);
@@ -31,16 +31,17 @@ public class TileCollectionsGenerator2 {
                 temp = temp.getAdjacent("base");
                 break;
             }
-            temp = temp.getAdjacent("base");
+            temp = temp.getAdjacent("base").getAdjacent("left");
         }
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3 && temp != null; i++) {
             Iterator2<Box2<Triangle,String>> inter = setRow(temp);
             inters.add(inter);
-            temp = temp.getAdjacent("right").getAdjacent("base");
+            if (temp.getAdjacent("right") != null)
+                temp = temp.getAdjacent("right").getAdjacent("base");
         }
-        return new Iterator2(inters);
+        return new Iterator2<>(inters);
     }
-    Iterator2<Iterator2<Box2<Triangle,String>>> createCollection() {
-        return setRow();
+    public Iterator2<Iterator2<Box2<Triangle,String>>> createCollection() {
+        return setCol();
     }
 }

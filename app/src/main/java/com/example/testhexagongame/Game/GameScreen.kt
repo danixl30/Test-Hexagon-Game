@@ -16,15 +16,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.testhexagongame.Color.ColorGenerator
+import com.example.testhexagongame.GameOver.GameOverDialog
+import com.example.testhexagongame.Points.PointsPolity
 import com.example.testhexagongame.R
 import com.example.testhexagongame.dragAndDrop.LongPressDraggable
-import com.example.testhexagongame.hexagon.center.HexagonCenter2
-import com.example.testhexagongame.hexagon.center.HexagonCenterFactory2
-import com.example.testhexagongame.piece.Piece2
+import com.example.testhexagongame.piece.Piece
 import com.example.testhexagongame.piece.RenderPiece
 import com.example.testhexagongame.tiles.tile.*
-import com.example.testhexagongame.tiles.tile.Graphics.RenderRow2
-import com.example.testhexagongame.tiles.tile.Shape.TriangleShape
+import com.example.testhexagongame.tiles.tile.Graphics.RenderRow
+import com.example.testhexagongame.tiles.tile.Shape.Triangle
 import com.example.testhexagongame.ui.theme.*
 import com.example.testhexagongame.utils.randomNum
 
@@ -99,21 +99,18 @@ val listColors = listOf(
 )
 
 @Composable
-fun GameScreen2(navController: NavHostController) {
+fun GameScreen(navController: NavHostController) {
     val colorGen = ColorGenerator(listColors, randomNum)
-    val triangles by remember {
-        mutableStateOf(
-            BoardFactory().create()
-        )
+    val game by remember {
+        mutableStateOf(Game(colorGen, randomNum, setOptions(), PointsPolity()))
     }
     val listPieces = remember {
-        mutableStateListOf<Piece2>()
+        mutableStateListOf<Piece>()
     }
-    
-    var stateText by remember {
-        mutableStateOf("")
+    if (listPieces.size == 0) {
+        game.pieces.forEach { e -> listPieces.add(e) }
     }
-    
+
     var enabledHammer by remember {
         mutableStateOf(false)
     }
@@ -121,66 +118,60 @@ fun GameScreen2(navController: NavHostController) {
     var enabledTrash by remember {
         mutableStateOf(false)
     }
-    
-    fun setEnableHammer() {
-        if (enabledHammer) {
-            enabledHammer = false
-            stateText = ""
-            return
+
+    var onGameOver by remember {
+        mutableStateOf(false)
+    }
+
+    var points by remember {
+        mutableStateOf(0)
+    }
+
+    game.subscribeOnEnableHammer { enabledHammer = it }
+    game.subscribeOnEnableTrash { enabledTrash = it }
+    game.subscribeOnChangePieces { e ->
+        run {
+            listPieces.clear()
+            e.forEach { e -> listPieces.add(e) }
         }
-        enabledHammer = true
-        enabledTrash = false
-        stateText = "Hammer"
+    }
+
+    game.subscribeOnGameOver { onGameOver = it }
+    game.subscribeOnPointsChange { points = it }
+
+    fun setEnableHammer() {
+        game.onEnableHammer()
     }
 
     fun setEnableTrash() {
-        if (enabledTrash) {
-            enabledTrash = false
-            stateText = ""
-            return
-        }
-        enabledHammer = false
-        enabledTrash = true
-        stateText = "Trash"
+        game.onEnableTrash()
     }
 
     fun goToHome() {
         navController.popBackStack()
         navController.navigate("main")
     }
-    
-    fun deleteColor(triangle: Box<TriangleShape>) {
-        if (triangle.getColor() == GRAY_BASE) return
-        triangle.setColor(GRAY_BASE)
-        enabledHammer = false
-        stateText = ""
+
+    fun deleteColor(triangle: Box2<Triangle, String>) {
+        game.onDestroyTriangle(triangle)
     }
 
-    while (listPieces.size < 3)
-        listPieces.add(Piece2(setOptions(), randomNum, colorGen))
-
-    val removePiece = { piece: Piece2 ->
+    val putPiece = { piece: Piece ->
         run {
-            listPieces.remove(piece)
-            if (listPieces.size < 3) listPieces.add(Piece2(setOptions(), randomNum, colorGen))
-            if (enabledTrash) {
-                enabledTrash = false
-                stateText = ""
-            }
-            return@run
+            game.onPutPiece(piece)
         }
     }
-    val centers by remember {
-        mutableStateOf(HexagonCenterFactory2(triangles).create())
+
+    fun removePiece(piece: Piece) {
+        game.destroyPiece(piece)
     }
-    fun onChangeColor() {
-        val listCenters = arrayListOf<HexagonCenter2>()
-        for (center in centers) {
-            val result = center.check()
-            if (result) listCenters.add(center)
+
+    if (onGameOver) {
+        GameOverDialog {
+            goToHome()
         }
-        listCenters.forEach { hexagonCenter -> hexagonCenter.empty() }
     }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             OutlinedButton(
@@ -208,12 +199,31 @@ fun GameScreen2(navController: NavHostController) {
                 }
             }
         }
-        if (stateText.isNotEmpty()) {
+        Row() {
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = points.toString(), color = MaterialTheme.colors.onPrimary,
+                fontSize = 40.sp
+            )
+        }
+        if (enabledHammer) {
             Spacer(modifier = Modifier.height(30.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(text = stateText, fontSize = 40.sp)
+                Text(
+                    text = "Hammer",
+                    color = MaterialTheme.colors.onPrimary,
+                    fontSize = 40.sp)
             }
+        }
+
+        if (enabledTrash) {
             Spacer(modifier = Modifier.height(30.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Trash",
+                    color = MaterialTheme.colors.onPrimary,
+                    fontSize = 40.sp)
+            }
         }
         LongPressDraggable(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -221,13 +231,12 @@ fun GameScreen2(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                val itemsTiles = BoardCollectionGenerator(triangles).createCollection()
+                val itemsTiles = game.boardByIterable
                 while (itemsTiles.hasNext()) {
                     Row() {
-                        RenderRow2(
-                            triangles = itemsTiles.getNext(), 
-                            removePiece = removePiece, 
-                            onChangeColor = { onChangeColor() },
+                        RenderRow(
+                            triangles = itemsTiles.next,
+                            removePiece = putPiece,
                             onClickItem = if (enabledHammer) ::deleteColor else null
                         )
                     }
@@ -236,7 +245,7 @@ fun GameScreen2(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(30.dp))
                 LazyRow(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                     items(listPieces) { piece ->
-                        RenderPiece(piece = piece, listPieces.indexOfFirst { it == piece }, deletePiece = if (enabledTrash) removePiece else null)
+                        RenderPiece(piece = piece, listPieces.indexOfFirst { it == piece }, deletePiece = if (enabledTrash) ::removePiece else null)
                     }
                 }
             }

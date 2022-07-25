@@ -28,8 +28,7 @@ public class HexagonCenter<T extends Shape2> implements Region {
 
     @Override
     public void empty() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            triangles.forEach(e -> e.setData(GRAY_BASE));
-        }
+        System.out.println("here");
+        triangles.forEach(e -> e.setData(GRAY_BASE));
     }
 }
