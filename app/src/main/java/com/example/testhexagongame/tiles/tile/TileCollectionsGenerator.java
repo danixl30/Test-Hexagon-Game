@@ -5,7 +5,7 @@ import com.example.testhexagongame.tiles.tile.Shape.Triangle;
 import com.example.testhexagongame.utils.Iterator;
 
 public class TileCollectionsGenerator {
-    private Box<Triangle,String> triangle;
+    private final Box<Triangle,String> triangle;
 
     public TileCollectionsGenerator(Box<Triangle,String> triangle){
         this.triangle = triangle;
