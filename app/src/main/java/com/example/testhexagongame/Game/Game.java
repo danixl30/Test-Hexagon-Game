@@ -12,7 +12,7 @@ import com.example.testhexagongame.piece.PieceManager;
 import com.example.testhexagongame.tiles.tile.BoardFactory;
 import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.tiles.tile.Shape.Triangle;
-import com.example.testhexagongame.tiles.tile.TileCollectionsGenerator2;
+import com.example.testhexagongame.tiles.tile.TileCollectionsGenerator;
 import com.example.testhexagongame.utils.Iterator;
 import com.example.testhexagongame.utils.Observer;
 
@@ -78,7 +78,7 @@ public class Game {
     }
 
     public Iterator<Iterator<Box<Triangle, String>>> getBoardByIterable() {
-        return new TileCollectionsGenerator2(triangles).createCollection();
+        return new TileCollectionsGenerator(triangles).createCollection();
     }
 
     public void onEnableTrash() {
