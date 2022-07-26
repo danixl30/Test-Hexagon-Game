@@ -1,11 +1,11 @@
 package com.example.testhexagongame.BoardCheck;
 
-import com.example.testhexagongame.piece.PieceFlippable2;
-import com.example.testhexagongame.tiles.tile.Box2;
-import com.example.testhexagongame.tiles.tile.Shape.Shape2;
+import com.example.testhexagongame.piece.PieceFlippable;
+import com.example.testhexagongame.tiles.tile.Box;
+import com.example.testhexagongame.tiles.tile.Shape.Shape;
 
 import java.util.ArrayList;
 
-public interface BoardChecker<T extends Shape2, U, W extends PieceFlippable2> {
-    public Boolean check(Box2<T, U> current, ArrayList<W> pieces);
+public interface BoardChecker<T extends Shape, U, W extends PieceFlippable> {
+    public Boolean check(Box<T, U> current, ArrayList<W> pieces);
 }

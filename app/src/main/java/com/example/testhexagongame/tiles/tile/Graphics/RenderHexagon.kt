@@ -8,16 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.testhexagongame.dragAndDrop.DropTarget
 import com.example.testhexagongame.piece.Piece
-import com.example.testhexagongame.tiles.tile.Box2
+import com.example.testhexagongame.tiles.tile.Box
 import com.example.testhexagongame.tiles.tile.RenderTriangle2
 import com.example.testhexagongame.tiles.tile.Shape.Triangle
-import com.example.testhexagongame.utils.Iterator2
+import com.example.testhexagongame.utils.Iterator
 
 @Composable
 fun RenderRow(
-    triangles: Iterator2<Box2<Triangle, String>>,
+    triangles: Iterator<Box<Triangle, String>>,
     removePiece: (piece: Piece) -> Unit,
-    onClickItem: ((Box2<Triangle, String>) -> Unit)?
+    onClickItem: ((Box<Triangle, String>) -> Unit)?
 ) {
     while (triangles.hasNext()) {
         val triangle = triangles.next

@@ -2,11 +2,11 @@ package com.example.testhexagongame.utils;
 
 import java.util.ArrayList;
 
-public class Iterator2<T> {
+public class Iterator<T> {
     private ArrayList<T> elements;
     private int index;
 
-    public Iterator2(ArrayList<T> elements) {
+    public Iterator(ArrayList<T> elements) {
         this.elements = elements;
         this.index = 0;
     }

@@ -3,50 +3,43 @@ package com.example.testhexagongame.Game;
 import static com.example.testhexagongame.ui.theme.ColorKt.GRAY_BASE;
 
 import com.example.testhexagongame.BoardCheck.HexagonBoardChecker;
-import com.example.testhexagongame.Color.ColorGenerator;
-import com.example.testhexagongame.Points.PointsCalculator;
+import com.example.testhexagongame.Points.PointsManager;
 import com.example.testhexagongame.hammer.Hammer;
 import com.example.testhexagongame.hexagon.center.HexagonCenter;
 import com.example.testhexagongame.hexagon.center.HexagonCenterFactory;
 import com.example.testhexagongame.piece.Piece;
-import com.example.testhexagongame.tiles.tile.BoardFactory2;
-import com.example.testhexagongame.tiles.tile.Box2;
+import com.example.testhexagongame.piece.PieceManager;
+import com.example.testhexagongame.tiles.tile.BoardFactory;
+import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.tiles.tile.Shape.Triangle;
 import com.example.testhexagongame.tiles.tile.TileCollectionsGenerator2;
-import com.example.testhexagongame.utils.Iterator2;
+import com.example.testhexagongame.utils.Iterator;
 import com.example.testhexagongame.utils.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import kotlin.jvm.functions.Function2;
 
 public class Game {
-    private final Box2<Triangle, String> triangles;
+    private final Box<Triangle, String> triangles;
     private final Observer<Boolean> hammerControl = new Observer<>(false);
     private final Observer<Boolean> trashControl = new Observer<>(false);
     private final ArrayList<HexagonCenter<Triangle>> centers;
-    private final Observer<ArrayList<Piece>> pieces = new Observer<>(new ArrayList<>());
-    private final ColorGenerator colorGenerator;
-    private final Function2<Integer, Integer, Integer> getRandom;
-    private final ArrayList<ArrayList<Integer>> options;
     private final Observer<Boolean> onGameOver = new Observer<>(false);
-    private final PointsCalculator pointsCalculator;
-    private final Observer<Integer> points = new Observer<>(0);
+    private final PointsManager pointsManager;
+    private final Observer<Integer> hammerCost = new Observer<>(100);
+    private final Observer<Integer> trashCost = new Observer<>(50);
+    private Function1<String, Unit> onSendMessage;
+    private final PieceManager<Piece> piecePieceManager;
 
-    public Game(ColorGenerator colorGenerator, Function2<Integer, Integer, Integer> getRandom, ArrayList<ArrayList<Integer>> options, PointsCalculator pointsCalculator) {
-        this.colorGenerator = colorGenerator;
-        this.getRandom = getRandom;
-        this.options = options;
-        this.pointsCalculator = pointsCalculator;
-        this.triangles = new BoardFactory2().create();
+    public Game(PointsManager pointsManager, PieceManager<Piece> piecePieceManager) {
+        this.pointsManager = pointsManager;
+        this.piecePieceManager = piecePieceManager;
+        this.triangles = new BoardFactory().create();
         centers = new HexagonCenterFactory(triangles).create();
-        System.out.println(centers);
-        onCreatePieces();
     }
 
     public void subscribeOnEnableHammer(Function1<Boolean, Unit> callback) {
@@ -62,42 +55,48 @@ public class Game {
     }
 
     public void subscribeOnPointsChange(Function1<Integer, Unit> callback) {
-        points.subscribe(callback);
+        pointsManager.subscribeOnPointsChange(callback);
+    }
+
+    public void subscribeOnHammerCostChange(Function1<Integer, Unit> callback) {
+        hammerCost.subscribe(callback);
+    }
+    public void subscribeOnTrashConstChange(Function1<Integer, Unit> callback) {
+        trashCost.subscribe(callback);
     }
 
     public void subscribeOnChangePieces(Function1<ArrayList<Piece>, Unit> callback) {
-        pieces.subscribe(callback);
+        piecePieceManager.subscribeOnChangePiece(callback);
+    }
+
+    public void subscribeOnSendMessage(Function1<String, Unit> callback) {
+        onSendMessage = callback;
     }
 
     public ArrayList<Piece> getPieces() {
-        return pieces.getValue();
+        return piecePieceManager.getPieces();
     }
 
-    public Iterator2<Iterator2<Box2<Triangle, String>>> getBoardByIterable() {
+    public Iterator<Iterator<Box<Triangle, String>>> getBoardByIterable() {
         return new TileCollectionsGenerator2(triangles).createCollection();
-    }
-
-    public void onCreatePieces() {
-        ArrayList<Piece> piecesLocal = pieces.getValue();
-        while (piecesLocal.size() < 3) {
-            piecesLocal.add(new Piece(colorGenerator, getRandom, options));
-        }
-        pieces.setValue(piecesLocal);
     }
 
     public void onEnableTrash() {
         if (trashControl.getValue()) trashControl.setValue(false);
+        else if (pointsManager.getPoints() - trashCost.getValue() < 0)
+            onSendMessage.invoke("You can't use the trash... Get more points");
         else trashControl.setValue(true);
         hammerControl.setValue(false);
     }
 
     public void destroyPiece(Piece piece) {
-        trashControl.setValue(false);
-        ArrayList<Piece> piecesLocal = pieces.getValue();
-        List<Piece> newPieces = piecesLocal.stream().filter(e -> e != piece).collect(Collectors.toList());
-        pieces.setValue(new ArrayList<>(newPieces));
-        onCreatePieces();
-        if (!new HexagonBoardChecker<Piece>().check(triangles, pieces.getValue())) onGameOver.setValue(true);
+        if (trashControl.getValue()) {
+            trashControl.setValue(false);
+            pointsManager.decreasePoints(trashCost.getValue());
+            trashCost.setValue(trashCost.getValue() + 50);
+        }
+        piecePieceManager.deletePiece(piece);
+        if (!new HexagonBoardChecker<Piece>().check(triangles, piecePieceManager.getPieces())) onGameOver.setValue(true);
     }
 
     public void onPutPiece(Piece piece) {
@@ -107,19 +106,24 @@ public class Game {
 
     public void onEnableHammer() {
         if (hammerControl.getValue()) hammerControl.setValue(false);
-        else hammerControl.setValue(true);
+        else if (pointsManager.getPoints() - hammerCost.getValue() >= 0)
+            hammerControl.setValue(true);
+        else onSendMessage.invoke("You can't use the hammer... Get more points");
         trashControl.setValue(false);
     }
 
-    public void onDestroyTriangle(Box2<Triangle, String> triangle) {
-        new Hammer<Triangle, String>(GRAY_BASE).destroy(triangle);
-        hammerControl.setValue(false);
+    public void onDestroyTriangle(Box<Triangle, String> triangle) {
+        Boolean res = new Hammer<Triangle, String>(GRAY_BASE).destroy(triangle);
+        if (res && hammerControl.getValue()) {
+            hammerControl.setValue(false);
+            pointsManager.decreasePoints(hammerCost.getValue());
+            hammerCost.setValue(hammerCost.getValue() + 50);
+        }
     }
 
     private void onCheckCenters() {
         List<HexagonCenter<Triangle>> centerChecked = centers.stream().filter(HexagonCenter::check).collect(Collectors.toList());
-        Integer currentPoints = pointsCalculator.calculate(centerChecked.size());
-        points.setValue(currentPoints + points.getValue());
+        pointsManager.increasePoints(centerChecked.size());
         centerChecked.forEach(HexagonCenter::empty);
     }
 }

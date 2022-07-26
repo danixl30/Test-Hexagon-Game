@@ -13,19 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
+    primary = Color(parseColor("#001526")),
     primaryVariant = Purple700,
     secondary = Teal200,
     background = Color.White,
     surface = Color.White,
     onPrimary = Color.White,
     onSecondary = Color.Black,
-    onBackground = Color(parseColor("#6E6E6E")),
+    onBackground = Color(parseColor("#0075D2")),
     onSurface = Color.Black,
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
+    primary = Color.White,
     primaryVariant = Purple700,
     secondary = Teal200,
     background = Color.White,
@@ -46,7 +46,7 @@ fun TestHexagonGameTheme(
     } else {
         LightColorPalette
     }
-    Box(modifier = if (isSystemInDarkTheme()) Modifier.background(Color(parseColor("#202020"))).fillMaxSize() else Modifier.background(Color.White).fillMaxSize()) {
+    Box(modifier = if (isSystemInDarkTheme()) Modifier.background(Color(parseColor("#001526"))).fillMaxSize() else Modifier.background(Color.White).fillMaxSize()) {
         MaterialTheme(
             colors = colors,
             typography = Typography,

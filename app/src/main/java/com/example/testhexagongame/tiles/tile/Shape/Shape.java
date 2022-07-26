@@ -1,18 +1,17 @@
 package com.example.testhexagongame.tiles.tile.Shape;
 
 import com.example.testhexagongame.tiles.tile.Box;
-import com.example.testhexagongame.tiles.tile.Box2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class Shape2<T extends Shape2, U> {
-    private final HashMap<String, Box2<T, U>> sides = new HashMap<>();
+public abstract class Shape<T extends Shape, U> {
+    private final HashMap<String, Box<T, U>> sides = new HashMap<>();
     protected final ArrayList<String> sidesRules = new ArrayList<>();
     protected final ArrayList<Integer> rotations = new ArrayList<>();
     private Integer currentRotation = 0;
 
-    public Shape2() {
+    public Shape() {
         setAdjacentRules();
         setRotationRules();
     }
@@ -29,16 +28,16 @@ public abstract class Shape2<T extends Shape2, U> {
         return currentRotation;
     }
 
-    public void setAdjacent(String side, Box2<T, U> node) {
+    public void setAdjacent(String side, Box<T, U> node) {
         if (!sidesRules.contains(side)) return;
         sides.put(side, node);
     }
 
-    public Box2<T, U> getSide(String side) {
+    public Box<T, U> getSide(String side) {
         return sides.get(side);
     }
 
-    public ArrayList<Box2<T, U>> getAdjacents() {
+    public ArrayList<Box<T, U>> getAdjacents() {
         return new ArrayList<>(sides.values());
     }
 }

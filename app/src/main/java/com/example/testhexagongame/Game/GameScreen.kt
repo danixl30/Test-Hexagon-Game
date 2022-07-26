@@ -1,5 +1,6 @@
 package com.example.testhexagongame.Game
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -11,16 +12,19 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.testhexagongame.Color.ColorGenerator
 import com.example.testhexagongame.GameOver.GameOverDialog
+import com.example.testhexagongame.Points.PointsManager
 import com.example.testhexagongame.Points.PointsPolity
 import com.example.testhexagongame.R
 import com.example.testhexagongame.dragAndDrop.LongPressDraggable
 import com.example.testhexagongame.piece.Piece
+import com.example.testhexagongame.piece.PieceManagerBoard
 import com.example.testhexagongame.piece.RenderPiece
 import com.example.testhexagongame.tiles.tile.*
 import com.example.testhexagongame.tiles.tile.Graphics.RenderRow
@@ -102,7 +106,10 @@ val listColors = listOf(
 fun GameScreen(navController: NavHostController) {
     val colorGen = ColorGenerator(listColors, randomNum)
     val game by remember {
-        mutableStateOf(Game(colorGen, randomNum, setOptions(), PointsPolity()))
+        mutableStateOf(Game(
+            PointsManager(PointsPolity()),
+            PieceManagerBoard(colorGen, randomNum, setOptions())
+        ))
     }
     val listPieces = remember {
         mutableStateListOf<Piece>()
@@ -127,6 +134,14 @@ fun GameScreen(navController: NavHostController) {
         mutableStateOf(0)
     }
 
+    var hammerCost by remember {
+        mutableStateOf(100)
+    }
+
+    var trashCost by remember {
+        mutableStateOf(50)
+    }
+
     game.subscribeOnEnableHammer { enabledHammer = it }
     game.subscribeOnEnableTrash { enabledTrash = it }
     game.subscribeOnChangePieces { e ->
@@ -138,6 +153,10 @@ fun GameScreen(navController: NavHostController) {
 
     game.subscribeOnGameOver { onGameOver = it }
     game.subscribeOnPointsChange { points = it }
+    game.subscribeOnHammerCostChange { hammerCost = it }
+    game.subscribeOnTrashConstChange { trashCost = it }
+    val context = LocalContext.current
+    game.subscribeOnSendMessage { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
 
     fun setEnableHammer() {
         game.onEnableHammer()
@@ -152,7 +171,7 @@ fun GameScreen(navController: NavHostController) {
         navController.navigate("main")
     }
 
-    fun deleteColor(triangle: Box2<Triangle, String>) {
+    fun deleteColor(triangle: Box<Triangle, String>) {
         game.onDestroyTriangle(triangle)
     }
 
@@ -187,7 +206,13 @@ fun GameScreen(navController: NavHostController) {
                     shape = CircleShape,
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = "Trash", tint = MaterialTheme.colors.onSecondary)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Default.Delete, contentDescription = "Trash", tint = MaterialTheme.colors.onSecondary)
+                        Text(
+                            text = trashCost.toString(), color = MaterialTheme.colors.onPrimary,
+                            fontSize = 10.sp
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 OutlinedButton(
@@ -195,7 +220,13 @@ fun GameScreen(navController: NavHostController) {
                     shape = CircleShape,
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
                 ) {
-                    Icon(painterResource(R.drawable.hammer), contentDescription = "Hammer", tint = MaterialTheme.colors.onSecondary)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(painterResource(R.drawable.hammer), contentDescription = "Hammer", tint = MaterialTheme.colors.onSecondary)
+                        Text(
+                            text = hammerCost.toString(), color = MaterialTheme.colors.onPrimary,
+                            fontSize = 10.sp
+                        )
+                    }
                 }
             }
         }

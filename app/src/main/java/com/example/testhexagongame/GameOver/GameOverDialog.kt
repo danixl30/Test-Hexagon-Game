@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,17 +23,20 @@ fun GameOverDialog(onExit: () -> Unit) {
         title = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().background(Color(parseColor("#2dbef7")))
+                modifier = Modifier.fillMaxWidth().background(Color(parseColor("#0075D2")))
             ) {
-                Text(text = "Game over...", fontSize = 40.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(text = "Game over...", fontSize = 45.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
         },
+        backgroundColor = MaterialTheme.colors.primary,
         text = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "You don't have moves...", fontSize = 20.sp)
+                Text(text = "You don't have moves...",
+                    color = MaterialTheme.colors.onPrimary,
+                    fontSize = 20.sp)
             }
         },
         confirmButton = {
@@ -47,9 +47,10 @@ fun GameOverDialog(onExit: () -> Unit) {
                 Button(
                     onClick = { onExit() },
                     shape = CircleShape,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(parseColor("#2dbef7"))),
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(parseColor("#0075D2"))),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Ok", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = "Ok", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
         }

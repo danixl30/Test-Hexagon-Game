@@ -1,6 +1,6 @@
 package com.example.testhexagongame.tiles.tile;
 
-import com.example.testhexagongame.tiles.tile.Shape.Shape2;
+import com.example.testhexagongame.tiles.tile.Shape.Shape;
 import com.example.testhexagongame.utils.Observer;
 
 import java.util.ArrayList;
@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class Box2<T extends Shape2, U> {
+public class Box<T extends Shape, U> {
     private final T shape;
     private final Observer<U> data;
 
-    public Box2(T shape, U data) {
+    public Box(T shape, U data) {
         this.shape = shape;
         this.data = new Observer<>(data);
     }
@@ -37,28 +37,28 @@ public class Box2<T extends Shape2, U> {
         return shape.getCurrentRotation();
     }
 
-    public void setAdjacent(String side, Box2<T, U> node) {
+    public void setAdjacent(String side, Box<T, U> node) {
         shape.setAdjacent(side, node);
     }
 
-    public Box2<T, U> getAdjacent(String side) {
+    public Box<T, U> getAdjacent(String side) {
         return shape.getSide(side);
     }
 
-    public ArrayList<Box2<T, U>> getByRoute(ArrayList<String> path) {
-        ArrayList<Box2<T, U>> list = new ArrayList<Box2<T, U>>();
+    public ArrayList<Box<T, U>> getByRoute(ArrayList<String> path) {
+        ArrayList<Box<T, U>> list = new ArrayList<Box<T, U>>();
         list.add(this);
         if (path.size() == 0) return list;
         String current = path.get(0);
         path.remove(0);
-        Box2<T, U> next = shape.getSide(current);
+        Box<T, U> next = shape.getSide(current);
         if (next == null) return list;
         ArrayList nodes = next.getByRoute(path);
         list.addAll(nodes);
         return list;
     }
 
-    public ArrayList<Box2<T, U>> getAdjacents() {
+    public ArrayList<Box<T, U>> getAdjacents() {
         return shape.getAdjacents();
     }
 }

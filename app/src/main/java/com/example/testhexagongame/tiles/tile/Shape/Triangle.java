@@ -1,6 +1,6 @@
 package com.example.testhexagongame.tiles.tile.Shape;
 
-public class Triangle extends Shape2 {
+public class Triangle extends Shape {
     @Override
     protected void setAdjacentRules() {
         sidesRules.add("left");
