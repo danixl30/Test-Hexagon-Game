@@ -5,6 +5,7 @@ import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.tiles.tile.Shape.Triangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class HexagonCenterFactory implements Factory<ArrayList<HexagonCenter<Triangle>>> {
     private final Box<Triangle, String> triangle;
@@ -15,8 +16,7 @@ public class HexagonCenterFactory implements Factory<ArrayList<HexagonCenter<Tri
         if (visited.contains(current)) return;
         visited.add(current);
         if (current.getRotation() == 0) {
-            ArrayList<String> path = new ArrayList<>();
-            path.add("right");path.add("right");path.add("base");path.add("left");path.add("left");
+            ArrayList<String> path = new ArrayList<>(Arrays.asList("right", "right", "base", "left", "left"));
             ArrayList<Box<Triangle, String>> triangles = current.getByRoute(path);
             if (triangles.size() == 6) {
                 HexagonCenter<Triangle> center = new HexagonCenter<>();

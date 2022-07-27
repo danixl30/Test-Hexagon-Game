@@ -12,6 +12,7 @@ import com.example.testhexagongame.tiles.tile.Shape.Triangle;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import kotlin.Pair;
@@ -117,8 +118,7 @@ public class Piece implements PieceFlippable<Triangle, String> {
     @Override
     public void flip() {
         String color = "";
-        ArrayList<String> path = new ArrayList<>();
-        path.add("right");path.add("right");path.add("base");path.add("left");path.add("left");
+        ArrayList<String> path = new ArrayList<>(Arrays.asList("right", "right", "base", "left", "left"));
         ArrayList<Box<Triangle, String>> triangles = triangle.getByRoute(path);
         for (Box<Triangle, String> triangleItem : triangles) {
             String temp = triangleItem.getData();
@@ -138,7 +138,7 @@ public class Piece implements PieceFlippable<Triangle, String> {
         ArrayList<Box<Triangle, String>> trianglesPiece = piece.getByRoute(path1);
         path1.addAll(path);
         ArrayList<Box<Triangle, String>> trianglesBoard = current.getByRoute(path1);
-        while (trianglesBoard.size() < 6) trianglesBoard.add(null);
+        while (trianglesBoard.size() < trianglesPiece.size()) trianglesBoard.add(null);
         for (int i = 0; i < trianglesPiece.size(); i++) {
             Boolean res = checkSingle(trianglesBoard.get(i), trianglesPiece.get(i));
             if (!res) return new Triple<>(false, trianglesBoard, trianglesPiece);
@@ -148,14 +148,15 @@ public class Piece implements PieceFlippable<Triangle, String> {
 
     private Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> checkAll(Box<Triangle, String> current, Box<Triangle, String> piece) {
         if (!Objects.equals(current.getRotation(), piece.getRotation())) return new Triple<>(false, null, null);
-        ArrayList<String> route1 = new ArrayList<>();
-        route1.add("right");route1.add("base");route1.add("left");route1.add("left");route1.add("base");
-        ArrayList<String> route2 = new ArrayList<>();
-        route2.add("left");route2.add("base");route2.add("right");route2.add("right");route2.add("base");
+        ArrayList<String> route1 = new ArrayList<>(Arrays.asList("right", "base", "left", "left", "base"));
+        ArrayList<String> route2 = new ArrayList<>(Arrays.asList("left", "base", "right", "right", "base"));
+        ArrayList<String> route3 = new ArrayList<>(Arrays.asList("left", "right", "right", "base", "left", "left"));
         Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res1 = validatePath(current, piece, route1);
         if (res1.component1()) return res1;
         Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res2 = validatePath(current, piece, route2);
         if (res2.component1()) return res2;
+        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res3 = validatePath(current, piece, route3);
+        if (res3.component1()) return res3;
         return new Triple<>(false, null, null);
     }
 

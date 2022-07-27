@@ -96,12 +96,12 @@ public class Game {
             trashCost.setValue(trashCost.getValue() + 50);
         }
         piecePieceManager.deletePiece(piece);
-        if (!new HexagonBoardChecker<Piece>().check(triangles, piecePieceManager.getPieces())) onGameOver.setValue(true);
     }
 
     public void onPutPiece(Piece piece) {
         destroyPiece(piece);
         onCheckCenters();
+        if (!new HexagonBoardChecker<Piece>().check(triangles, piecePieceManager.getPieces())) onGameOver.setValue(true);
     }
 
     public void onEnableHammer() {
