@@ -21,12 +21,13 @@ fun RenderRow(
 ) {
     while (triangles.hasNext()) {
         val triangle = triangles.next
-        DropTarget<Piece>(modifier = Modifier) { isInBound, data ->
-            if (isInBound && data != null && data.putPiece(triangle)){
+        DropTarget<Piece>(modifier = Modifier) { isInBound, data, isInverted ->
+            if (isInBound && data != null && data.putPiece(triangle, isInverted)){
                 removePiece(data)
             }
-            Box(modifier = if (onClickItem == null) if (!isInBound) Modifier else Modifier.background(
-                Color.Red) else Modifier.clickable { onClickItem(triangle) }) {
+            Box(modifier = if (onClickItem == null)
+                if (!isInBound) Modifier
+                else Modifier.background(Color.Red) else Modifier.clickable { onClickItem(triangle) }) {
                 RenderTriangle2(triangle)
             }
         }

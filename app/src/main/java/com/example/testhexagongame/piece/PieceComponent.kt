@@ -20,13 +20,19 @@ fun RenderPiece(piece: Piece, position: Int, deletePiece: ((Piece) -> Unit)?) {
             Row() {
                 RenderTriangle2(piece.triangles!!)
                 RenderTriangle2(piece.triangles?.getAdjacent("right")!!)
-                RenderTriangle2(piece.triangles?.getAdjacent("right")?.getAdjacent("right")!!)
+                RenderTriangle2(
+                    piece.triangles?.getAdjacent("right")?.getAdjacent("right")!!,
+                )
             }
             Spacer(modifier = Modifier.height(14.dp))
             Row() {
                 RenderTriangle2(piece.triangles?.getAdjacent("base")!!)
-                RenderTriangle2(piece.triangles?.getAdjacent("base")?.getAdjacent("right")!!)
-                RenderTriangle2(piece.triangles?.getAdjacent("base")?.getAdjacent("right")?.getAdjacent("right")!!)
+                RenderTriangle2(
+                    piece.triangles?.getAdjacent("base")?.getAdjacent("right")!!,
+                )
+                RenderTriangle2(
+                    piece.triangles?.getAdjacent("base")?.getAdjacent("right")?.getAdjacent("right")!!,
+                )
             }
         }
     }

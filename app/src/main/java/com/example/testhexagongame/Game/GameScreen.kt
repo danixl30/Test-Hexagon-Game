@@ -23,12 +23,14 @@ import com.example.testhexagongame.Points.PointsManager
 import com.example.testhexagongame.Points.PointsPolity
 import com.example.testhexagongame.R
 import com.example.testhexagongame.dragAndDrop.LongPressDraggable
+import com.example.testhexagongame.hammer.Hammer
 import com.example.testhexagongame.piece.Piece
 import com.example.testhexagongame.piece.PieceManagerBoard
 import com.example.testhexagongame.piece.RenderPiece
 import com.example.testhexagongame.tiles.tile.*
 import com.example.testhexagongame.tiles.tile.Graphics.RenderRow
 import com.example.testhexagongame.tiles.tile.Shape.Triangle
+import com.example.testhexagongame.trash.Trash
 import com.example.testhexagongame.ui.theme.*
 import com.example.testhexagongame.utils.randomNum
 
@@ -105,11 +107,20 @@ val listColors = listOf(
 @Composable
 fun GameScreen(navController: NavHostController) {
     val colorGen = ColorGenerator(listColors, randomNum)
+    val pointsManager = PointsManager(PointsPolity())
+    val pieceManagerBoard = PieceManagerBoard(colorGen, randomNum, setOptions())
     val game by remember {
         mutableStateOf(Game(
-            PointsManager(PointsPolity()),
-            PieceManagerBoard(colorGen, randomNum, setOptions())
+            pointsManager,
+            pieceManagerBoard
         ))
+    }
+    val context = LocalContext.current
+    val hammer by remember {
+        mutableStateOf(Hammer<Triangle, String>(pointsManager, GRAY_BASE) { Toast.makeText(context, it, Toast.LENGTH_LONG).show() })
+    }
+    val trash by remember {
+        mutableStateOf(Trash(pointsManager, pieceManagerBoard) { Toast.makeText(context, it, Toast.LENGTH_LONG).show() })
     }
     val listPieces = remember {
         mutableStateListOf<Piece>()
@@ -142,28 +153,28 @@ fun GameScreen(navController: NavHostController) {
         mutableStateOf(50)
     }
 
-    game.subscribeOnEnableHammer { enabledHammer = it }
-    game.subscribeOnEnableTrash { enabledTrash = it }
-    game.subscribeOnChangePieces { e ->
+    hammer.subscribeOnEnable {
+        println(it)
+        enabledHammer = it }
+    trash.subscribeOnEnable { enabledTrash = it }
+    game.subscribeOnChangePieces {
         run {
             listPieces.clear()
-            e.forEach { e -> listPieces.add(e) }
+            it.forEach { listPieces += it }
         }
     }
 
     game.subscribeOnGameOver { onGameOver = it }
     game.subscribeOnPointsChange { points = it }
-    game.subscribeOnHammerCostChange { hammerCost = it }
-    game.subscribeOnTrashConstChange { trashCost = it }
-    val context = LocalContext.current
-    game.subscribeOnSendMessage { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+    hammer.subscribeOnCostChange { hammerCost = it }
+    trash.subscribeOnCostChange { trashCost = it }
 
     fun setEnableHammer() {
-        game.onEnableHammer()
+        hammer.onEnable()
     }
 
     fun setEnableTrash() {
-        game.onEnableTrash()
+        trash.onEnable()
     }
 
     fun goToHome() {
@@ -172,7 +183,7 @@ fun GameScreen(navController: NavHostController) {
     }
 
     fun deleteColor(triangle: Box<Triangle, String>) {
-        game.onDestroyTriangle(triangle)
+        hammer.destroy(triangle)
     }
 
     val putPiece = { piece: Piece ->
@@ -182,7 +193,7 @@ fun GameScreen(navController: NavHostController) {
     }
 
     fun removePiece(piece: Piece) {
-        game.destroyPiece(piece)
+        trash.delete(piece)
     }
 
     if (onGameOver) {
@@ -200,7 +211,7 @@ fun GameScreen(navController: NavHostController) {
             ) {
                 Icon(Icons.Default.Home, contentDescription = "Home", tint = MaterialTheme.colors.onSecondary)
             }
-            Row() {
+            Row {
                 OutlinedButton(
                     onClick = { setEnableTrash() },
                     shape = CircleShape,
@@ -230,7 +241,7 @@ fun GameScreen(navController: NavHostController) {
                 }
             }
         }
-        Row() {
+        Row {
             Spacer(modifier = Modifier.width(20.dp))
             Text(
                 text = points.toString(), color = MaterialTheme.colors.onPrimary,
@@ -264,7 +275,7 @@ fun GameScreen(navController: NavHostController) {
             ) {
                 val itemsTiles = game.boardByIterable
                 while (itemsTiles.hasNext()) {
-                    Row() {
+                    Row {
                         RenderRow(
                             triangles = itemsTiles.next,
                             removePiece = putPiece,

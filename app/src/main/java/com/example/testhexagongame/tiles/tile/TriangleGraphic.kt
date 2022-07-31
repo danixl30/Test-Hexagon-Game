@@ -17,7 +17,9 @@ import com.example.testhexagongame.tiles.tile.Shape.Triangle
 import com.example.testhexagongame.utils.parseColor
 
 @Composable
-fun RenderTriangle2(triangle: Box<Triangle, String>) {
+fun RenderTriangle2(
+    triangle: Box<Triangle, String>,
+) {
     var colorRender by remember {
         mutableStateOf(triangle.data)
     }

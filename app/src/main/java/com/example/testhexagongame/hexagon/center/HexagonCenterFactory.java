@@ -1,5 +1,7 @@
 package com.example.testhexagongame.hexagon.center;
 
+import androidx.annotation.NonNull;
+
 import com.example.testhexagongame.Factories.Factory;
 import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.tiles.tile.Shape.Triangle;
@@ -12,7 +14,7 @@ public class HexagonCenterFactory implements Factory<ArrayList<HexagonCenter<Tri
 
     private final ArrayList<HexagonCenter<Triangle>> centers = new ArrayList<>();
 
-    private void search(Box<Triangle, String> current, ArrayList<Box<Triangle, String>> visited) {
+    private void search(Box<Triangle, String> current, @NonNull ArrayList<Box<Triangle, String>> visited) {
         if (visited.contains(current)) return;
         visited.add(current);
         if (current.getRotation() == 0) {

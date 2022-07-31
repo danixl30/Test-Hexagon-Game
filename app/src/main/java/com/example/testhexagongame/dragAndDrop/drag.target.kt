@@ -30,22 +30,30 @@ fun <T> DragTarget(
         }
         .pointerInput(Unit) {
             detectDragGesturesAfterLongPress(onDragStart = {
+                currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
                 currentState.dataToDrop = dataToDrop
                 currentState.isDragging = true
+                currentState.isElement = false
                 currentState.elIndex = elPos
                 currentState.dragPosition = currentPosition + it
                 currentState.draggableComposable = content
             }, onDrag = { change, dragAmount ->
+                currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
+                if (dragAmount.x > 1 || dragAmount.x < -1 || dragAmount.y > 1 || dragAmount.y < -1) currentState.offsetZone = Offset(0f, -300f)
                 change.consumeAllChanges()
                 currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
             }, onDragEnd = {
+                currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
                 currentState.isDragging = false
                 currentState.elIndex = 0
                 currentState.dragOffset = offsetBase
+                currentState.isElement = false
             }, onDragCancel = {
+                currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
                 currentState.isDragging = false
                 currentState.elIndex = 0
                 currentState.dragOffset = offsetBase
+                currentState.isElement = false
             })
         }) {
         content()

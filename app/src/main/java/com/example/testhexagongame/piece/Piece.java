@@ -3,13 +3,9 @@ package com.example.testhexagongame.piece;
 import static com.example.testhexagongame.ui.theme.ColorKt.GRAY_BASE;
 import static com.example.testhexagongame.ui.theme.ColorKt.TRANSPARENT;
 
-import androidx.annotation.NonNull;
-
 import com.example.testhexagongame.Color.ColorGenerator;
 import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.tiles.tile.Shape.Triangle;
-
-import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +33,6 @@ public class Piece implements PieceFlippable<Triangle, String> {
         return triangle;
     }
 
-    @NonNull
-    @Contract("_, _, _, _, _ -> new")
     private Pair<Box<Triangle, String>, ArrayList<Box<Triangle, String>>> setTriangleRow(
             ArrayList<Box<Triangle, String>> tops,
             Box<Triangle, String> prev,
@@ -100,18 +94,43 @@ public class Piece implements PieceFlippable<Triangle, String> {
     }
 
     @Override
-    public Boolean putPiece(Box<Triangle, String> current) {
+    public Boolean putPiece(Box<Triangle, String> current, boolean isInverted) {
         Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res = checkAll(current, triangle.getAdjacent("right"));
         if (res.component1()) {
             colorAll(res.component2(), res.component3());
             return true;
+        }
+        if (current.getRotation() == 180 || !isInverted) return false;
+        if (current.getAdjacent("left") == null || current.getAdjacent("left").getAdjacent("base") == null || current.getAdjacent("right") == null) {
+            res = checkAll(current, triangle.getByRoute(new ArrayList<>(Arrays.asList("base", "right"))).get(2));
+            if (res.component1()) {
+                colorAll(res.component2(), res.component3());
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public Boolean isFit(Box<Triangle, String> current) {
-        return checkAll(current, triangle.getAdjacent("right")).component1();
+        return checkAll(current, triangle.getAdjacent("right")).component1() || checkAll(current, triangle.getByRoute(new ArrayList<>(Arrays.asList("base", "right"))).get(2)).component1();
+    }
+
+    private Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>>
+    checkAll(Box<Triangle, String> current, Box<Triangle, String> piece) {
+        if (!Objects.equals(current.getRotation(), piece.getRotation())) return new Triple<>(false, null, null);
+        System.out.println(current.getRotation());
+        System.out.println(piece.getRotation());
+        ArrayList<String> route1 = new ArrayList<>(Arrays.asList("right", "base", "left", "left", "base"));
+        ArrayList<String> route2 = new ArrayList<>(Arrays.asList("left", "base", "right", "right", "base"));
+        ArrayList<String> route3 = new ArrayList<>(Arrays.asList("left", "right", "right", "base", "left", "left"));
+        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res1 = validatePath(current, piece, route1);
+        if (res1.component1()) return res1;
+        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res2 = validatePath(current, piece, route2);
+        if (res2.component1()) return res2;
+        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res3 = validatePath(current, piece, route3);
+        if (res3.component1()) return res3;
+        return new Triple<>(false, null, null);
     }
 
 
@@ -146,19 +165,6 @@ public class Piece implements PieceFlippable<Triangle, String> {
         return new Triple<>(true, trianglesBoard, trianglesPiece);
     }
 
-    private Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> checkAll(Box<Triangle, String> current, Box<Triangle, String> piece) {
-        if (!Objects.equals(current.getRotation(), piece.getRotation())) return new Triple<>(false, null, null);
-        ArrayList<String> route1 = new ArrayList<>(Arrays.asList("right", "base", "left", "left", "base"));
-        ArrayList<String> route2 = new ArrayList<>(Arrays.asList("left", "base", "right", "right", "base"));
-        ArrayList<String> route3 = new ArrayList<>(Arrays.asList("left", "right", "right", "base", "left", "left"));
-        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res1 = validatePath(current, piece, route1);
-        if (res1.component1()) return res1;
-        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res2 = validatePath(current, piece, route2);
-        if (res2.component1()) return res2;
-        Triple<Boolean, ArrayList<Box<Triangle, String>>, ArrayList<Box<Triangle, String>>> res3 = validatePath(current, piece, route3);
-        if (res3.component1()) return res3;
-        return new Triple<>(false, null, null);
-    }
 
     private void colorSingle(Box<Triangle, String> current, Box<Triangle, String> piece) {
         if (Objects.equals(piece.getData(), TRANSPARENT)) return;

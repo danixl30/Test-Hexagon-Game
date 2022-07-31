@@ -13,4 +13,7 @@ internal class DragTargetInfo {
     var draggableComposable by mutableStateOf<(@Composable () -> Unit)?>(null)
     var dataToDrop by mutableStateOf<Any?>(null)
     var elIndex by mutableStateOf(0)
+    var isElement by mutableStateOf(value = false)
+    var offsetZone by mutableStateOf(Offset(0f, -300f))
+    var subscribers = mutableMapOf<String, Int>()
 }
