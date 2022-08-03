@@ -6,6 +6,6 @@ import com.example.testhexagongame.tiles.tile.Shape.Shape;
 
 import java.util.ArrayList;
 
-public interface BoardChecker<T extends Shape, U, W extends PieceFlippable> {
-    public Boolean check(Box<T, U> current, ArrayList<W> pieces);
+public interface BoardChecker<T extends Shape, U, Sides, W extends PieceFlippable> {
+    public Boolean check(Box<T, U, Sides> current, ArrayList<W> pieces);
 }

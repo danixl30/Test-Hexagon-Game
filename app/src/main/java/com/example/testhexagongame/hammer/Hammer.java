@@ -8,7 +8,7 @@ import com.example.testhexagongame.utils.Observer;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class Hammer<T extends Shape, U> {
+public class Hammer<T extends Shape, U, Sides> {
     private final PointsManager pointsManager;
     private final Observer<Boolean> hammerControl = new Observer<>(false);
     private final Observer<Integer> hammerCost = new Observer<>(100);
@@ -39,7 +39,7 @@ public class Hammer<T extends Shape, U> {
         }
     }
 
-    public void destroy(Box<T, U> box) {
+    public void destroy(Box<T, U, Sides> box) {
         if (hammerControl.getValue() && box.getData() != baseItem) {
             box.setData(baseItem);
             pointsManager.decreasePoints(hammerCost.getValue());

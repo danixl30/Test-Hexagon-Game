@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class Box<T extends Shape, U> {
+public class Box<T extends Shape, U, Sides> {
     private final T shape;
     private final Observer<U> data;
 
@@ -37,28 +37,28 @@ public class Box<T extends Shape, U> {
         return shape.getCurrentRotation();
     }
 
-    public void setAdjacent(String side, Box<T, U> node) {
+    public void setAdjacent(String side, Box<T, U, Sides> node) {
         shape.setAdjacent(side, node);
     }
 
-    public Box<T, U> getAdjacent(String side) {
+    public Box<T, U, Sides> getAdjacent(String side) {
         return shape.getSide(side);
     }
 
-    public ArrayList<Box<T, U>> getByRoute(ArrayList<String> path) {
-        ArrayList<Box<T, U>> list = new ArrayList<Box<T, U>>();
+    public ArrayList<Box<T, U, Sides>> getByRoute(ArrayList<String> path) {
+        ArrayList<Box<T, U, Sides>> list = new ArrayList<>();
         list.add(this);
         if (path.size() == 0) return list;
         String current = path.get(0);
         path.remove(0);
-        Box<T, U> next = shape.getSide(current);
+        Box<T, U, Sides> next = shape.getSide(current);
         if (next == null) return list;
         ArrayList nodes = next.getByRoute(path);
         list.addAll(nodes);
         return list;
     }
 
-    public ArrayList<Box<T, U>> getAdjacents() {
+    public ArrayList<Box<T, U, Sides>> getAdjacents() {
         return shape.getAdjacents();
     }
 }

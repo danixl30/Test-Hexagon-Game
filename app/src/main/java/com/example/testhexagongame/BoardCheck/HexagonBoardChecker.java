@@ -6,9 +6,9 @@ import com.example.testhexagongame.tiles.tile.Shape.Triangle;
 
 import java.util.ArrayList;
 
-public class HexagonBoardChecker<T extends PieceFlippable<Triangle, String>> implements BoardChecker<Triangle, String, T> {
+public class HexagonBoardChecker<T extends PieceFlippable<Triangle, String, String>> implements BoardChecker<Triangle, String, String, T> {
 
-    private Boolean checkBox(Box<Triangle, String> current, T piece, ArrayList<Box<Triangle, String>> visited) {
+    private Boolean checkBox(Box<Triangle, String, String> current, T piece, ArrayList<Box<Triangle, String, String>> visited) {
         if (visited.contains(current)) return false;
         visited.add(current);
         for (int i = 1; i <= 6; i++) {
@@ -19,23 +19,23 @@ public class HexagonBoardChecker<T extends PieceFlippable<Triangle, String>> imp
             }
             piece.flip();
         }
-        for (Box<Triangle, String> side: current.getAdjacents()) {
+        for (Box<Triangle, String, String> side: current.getAdjacents()) {
             Boolean res = checkBox(side, piece, visited);
             if (res) return true;
         }
         return false;
     }
 
-    private Boolean checkPieces(Box<Triangle, String> current, ArrayList<T> pieces) {
+    private Boolean checkPieces(Box<Triangle, String, String> current, ArrayList<T> pieces) {
         for (T piece : pieces) {
-            ArrayList<Box<Triangle, String>> visited = new ArrayList<>();
+            ArrayList<Box<Triangle, String, String>> visited = new ArrayList<>();
             Boolean res = checkBox(current, piece, visited);
             if (res) return true;
         }
         return false;
     }
     @Override
-    public Boolean check(Box<Triangle, String> current, ArrayList<T> pieces) {
+    public Boolean check(Box<Triangle, String, String> current, ArrayList<T> pieces) {
         return checkPieces(current, pieces);
     }
 }

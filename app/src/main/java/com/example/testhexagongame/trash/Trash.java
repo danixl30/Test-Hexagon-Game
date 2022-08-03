@@ -3,7 +3,6 @@ package com.example.testhexagongame.trash;
 import com.example.testhexagongame.Points.PointsManager;
 import com.example.testhexagongame.piece.PieceFlippable;
 import com.example.testhexagongame.piece.PieceManager;
-import com.example.testhexagongame.tiles.tile.Box;
 import com.example.testhexagongame.utils.Observer;
 
 import kotlin.Unit;

@@ -10,7 +10,7 @@ import com.example.testhexagongame.dragAndDrop.DragTarget
 import com.example.testhexagongame.tiles.tile.RenderTriangle2
 
 @Composable
-fun RenderPiece(piece: Piece, position: Int, deletePiece: ((Piece) -> Unit)?) {
+fun RenderPiece(piece: HexagonPiece, position: Int, deletePiece: ((HexagonPiece) -> Unit)?) {
     @Composable
     fun PieceComp() {
         Column(

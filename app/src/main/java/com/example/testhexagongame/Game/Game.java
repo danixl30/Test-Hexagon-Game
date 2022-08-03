@@ -1,13 +1,10 @@
 package com.example.testhexagongame.Game;
 
-import static com.example.testhexagongame.ui.theme.ColorKt.GRAY_BASE;
-
 import com.example.testhexagongame.BoardCheck.HexagonBoardChecker;
 import com.example.testhexagongame.Points.PointsManager;
-import com.example.testhexagongame.hammer.Hammer;
 import com.example.testhexagongame.hexagon.center.HexagonCenter;
 import com.example.testhexagongame.hexagon.center.HexagonCenterFactory;
-import com.example.testhexagongame.piece.Piece;
+import com.example.testhexagongame.piece.HexagonPiece;
 import com.example.testhexagongame.piece.PieceManager;
 import com.example.testhexagongame.tiles.tile.BoardFactory;
 import com.example.testhexagongame.tiles.tile.Box;
@@ -24,13 +21,13 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 public class Game {
-    private final Box<Triangle, String> triangles;
+    private final Box<Triangle, String, String> triangles;
     private final ArrayList<HexagonCenter<Triangle>> centers;
     private final Observer<Boolean> onGameOver = new Observer<>(false);
     private final PointsManager pointsManager;
-    private final PieceManager<Piece> piecePieceManager;
+    private final PieceManager<HexagonPiece> piecePieceManager;
 
-    public Game(PointsManager pointsManager, PieceManager<Piece> piecePieceManager) {
+    public Game(PointsManager pointsManager, PieceManager<HexagonPiece> piecePieceManager) {
         this.pointsManager = pointsManager;
         this.piecePieceManager = piecePieceManager;
         this.triangles = new BoardFactory().create();
@@ -45,22 +42,22 @@ public class Game {
         pointsManager.subscribeOnPointsChange(callback);
     }
 
-    public void subscribeOnChangePieces(Function1<ArrayList<Piece>, Unit> callback) {
+    public void subscribeOnChangePieces(Function1<ArrayList<HexagonPiece>, Unit> callback) {
         piecePieceManager.subscribeOnChangePiece(callback);
     }
 
-    public ArrayList<Piece> getPieces() {
+    public ArrayList<HexagonPiece> getPieces() {
         return piecePieceManager.getPieces();
     }
 
-    public Iterator<Iterator<Box<Triangle, String>>> getBoardByIterable() {
+    public Iterator<Iterator<Box<Triangle, String, String>>> getBoardByIterable() {
         return new TileCollectionsGenerator(triangles).createCollection();
     }
 
-    public void onPutPiece(Piece piece) {
+    public void onPutPiece(HexagonPiece piece) {
         piecePieceManager.deletePiece(piece);
         onCheckCenters();
-        if (!new HexagonBoardChecker<Piece>().check(triangles, piecePieceManager.getPieces())) onGameOver.setValue(true);
+        if (!new HexagonBoardChecker<HexagonPiece>().check(triangles, piecePieceManager.getPieces())) onGameOver.setValue(true);
     }
 
     private void onCheckCenters() {

@@ -24,9 +24,7 @@ import com.example.testhexagongame.Points.PointsPolity
 import com.example.testhexagongame.R
 import com.example.testhexagongame.dragAndDrop.LongPressDraggable
 import com.example.testhexagongame.hammer.Hammer
-import com.example.testhexagongame.piece.Piece
-import com.example.testhexagongame.piece.PieceManagerBoard
-import com.example.testhexagongame.piece.RenderPiece
+import com.example.testhexagongame.piece.*
 import com.example.testhexagongame.tiles.tile.*
 import com.example.testhexagongame.tiles.tile.Graphics.RenderRow
 import com.example.testhexagongame.tiles.tile.Shape.Triangle
@@ -106,9 +104,15 @@ val listColors = listOf(
 
 @Composable
 fun GameScreen(navController: NavHostController) {
-    val colorGen = ColorGenerator(listColors, randomNum)
+    val colorGen = ColorGenerator(ArrayList(listColors), randomNum)
     val pointsManager = PointsManager(PointsPolity())
-    val pieceManagerBoard = PieceManagerBoard(colorGen, randomNum, setOptions())
+    val pieceManagerBoard = PieceManagerBoard(
+        colorGen,
+        randomNum,
+        setOptions(),
+        PieceColorChecker(),
+        ColorTransfer()
+    )
     val game by remember {
         mutableStateOf(Game(
             pointsManager,
@@ -117,13 +121,13 @@ fun GameScreen(navController: NavHostController) {
     }
     val context = LocalContext.current
     val hammer by remember {
-        mutableStateOf(Hammer<Triangle, String>(pointsManager, GRAY_BASE) { Toast.makeText(context, it, Toast.LENGTH_LONG).show() })
+        mutableStateOf(Hammer<Triangle, String, String>(pointsManager, GRAY_BASE) { Toast.makeText(context, it, Toast.LENGTH_LONG).show() })
     }
     val trash by remember {
         mutableStateOf(Trash(pointsManager, pieceManagerBoard) { Toast.makeText(context, it, Toast.LENGTH_LONG).show() })
     }
     val listPieces = remember {
-        mutableStateListOf<Piece>()
+        mutableStateListOf<HexagonPiece>()
     }
     if (listPieces.size == 0) {
         game.pieces.forEach { e -> listPieces.add(e) }
@@ -182,17 +186,17 @@ fun GameScreen(navController: NavHostController) {
         navController.navigate("main")
     }
 
-    fun deleteColor(triangle: Box<Triangle, String>) {
+    fun deleteColor(triangle: Box<Triangle, String, String>) {
         hammer.destroy(triangle)
     }
 
-    val putPiece = { piece: Piece ->
+    val putPiece = { piece: HexagonPiece ->
         run {
             game.onPutPiece(piece)
         }
     }
 
-    fun removePiece(piece: Piece) {
+    fun removePiece(piece: HexagonPiece) {
         trash.delete(piece)
     }
 
