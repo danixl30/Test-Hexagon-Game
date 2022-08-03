@@ -18,20 +18,23 @@ fun RenderPiece(piece: HexagonPiece, position: Int, deletePiece: ((HexagonPiece)
             modifier = Modifier.clickable { if (deletePiece == null) piece.flip() else deletePiece(piece)}
         ) {
             Row() {
-                RenderTriangle2(piece.triangles!!)
-                RenderTriangle2(piece.triangles?.getAdjacent("right")!!)
+                RenderTriangle2(piece.triangles!!, null)
+                RenderTriangle2(piece.triangles?.getAdjacent("right")!!, null)
                 RenderTriangle2(
                     piece.triangles?.getAdjacent("right")?.getAdjacent("right")!!,
+                    null,
                 )
             }
             Spacer(modifier = Modifier.height(14.dp))
             Row() {
-                RenderTriangle2(piece.triangles?.getAdjacent("base")!!)
+                RenderTriangle2(piece.triangles?.getAdjacent("base")!!, null)
                 RenderTriangle2(
                     piece.triangles?.getAdjacent("base")?.getAdjacent("right")!!,
+                    null,
                 )
                 RenderTriangle2(
                     piece.triangles?.getAdjacent("base")?.getAdjacent("right")?.getAdjacent("right")!!,
+                    null,
                 )
             }
         }

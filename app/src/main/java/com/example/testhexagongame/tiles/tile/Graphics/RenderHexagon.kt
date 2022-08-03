@@ -3,6 +3,7 @@ package com.example.testhexagongame.tiles.tile.Graphics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,13 +12,15 @@ import com.example.testhexagongame.piece.HexagonPiece
 import com.example.testhexagongame.tiles.tile.Box
 import com.example.testhexagongame.tiles.tile.RenderTriangle2
 import com.example.testhexagongame.tiles.tile.Shape.Triangle
+import com.example.testhexagongame.ui.theme.GRAY_BASE
 import com.example.testhexagongame.utils.Iterator
 
 @Composable
 fun RenderRow(
     triangles: Iterator<Box<Triangle, String, String>>,
     removePiece: (piece: HexagonPiece) -> Unit,
-    onClickItem: ((Box<Triangle, String, String>) -> Unit)?
+    onClickItem: ((Box<Triangle, String, String>) -> Unit)?,
+    triangleInsideIcon: (@Composable BoxScope.() -> Unit)
 ) {
     while (triangles.hasNext()) {
         val triangle = triangles.next
@@ -28,7 +31,7 @@ fun RenderRow(
             Box(modifier = if (onClickItem == null)
                 if (!isInBound) Modifier
                 else Modifier.background(Color.Red) else Modifier.clickable { onClickItem(triangle) }) {
-                RenderTriangle2(triangle)
+                RenderTriangle2(triangle, if (triangle.data != GRAY_BASE) triangleInsideIcon else null)
             }
         }
     }

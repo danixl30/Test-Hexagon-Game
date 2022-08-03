@@ -157,9 +157,7 @@ fun GameScreen(navController: NavHostController) {
         mutableStateOf(50)
     }
 
-    hammer.subscribeOnEnable {
-        println(it)
-        enabledHammer = it }
+    hammer.subscribeOnEnable { enabledHammer = it }
     trash.subscribeOnEnable { enabledTrash = it }
     game.subscribeOnChangePieces {
         run {
@@ -190,86 +188,31 @@ fun GameScreen(navController: NavHostController) {
         hammer.destroy(triangle)
     }
 
-    val putPiece = { piece: HexagonPiece ->
-        run {
-            game.onPutPiece(piece)
-        }
-    }
+    val putPiece = { piece: HexagonPiece -> game.onPutPiece(piece) }
 
     fun removePiece(piece: HexagonPiece) {
         trash.delete(piece)
     }
 
     if (onGameOver) {
-        GameOverDialog {
-            goToHome()
-        }
+        GameOverDialog { goToHome() }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            OutlinedButton(
-                onClick = { goToHome() },
-                shape = CircleShape,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
-            ) {
-                Icon(Icons.Default.Home, contentDescription = "Home", tint = MaterialTheme.colors.onSecondary)
-            }
-            Row {
-                OutlinedButton(
-                    onClick = { setEnableTrash() },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Delete, contentDescription = "Trash", tint = MaterialTheme.colors.onSecondary)
-                        Text(
-                            text = trashCost.toString(), color = MaterialTheme.colors.onPrimary,
-                            fontSize = 10.sp
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                OutlinedButton(
-                    onClick = { setEnableHammer() },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(painterResource(R.drawable.hammer), contentDescription = "Hammer", tint = MaterialTheme.colors.onSecondary)
-                        Text(
-                            text = hammerCost.toString(), color = MaterialTheme.colors.onPrimary,
-                            fontSize = 10.sp
-                        )
-                    }
-                }
-            }
-        }
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = points.toString(), color = MaterialTheme.colors.onPrimary,
-                fontSize = 40.sp
-            )
-        }
+        GameScreenHeader(
+            ::goToHome,
+            ::setEnableTrash,
+            ::setEnableHammer,
+            hammerCost,
+            trashCost
+        )
+        PointsComponent(points)
         if (enabledHammer) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Hammer",
-                    color = MaterialTheme.colors.onPrimary,
-                    fontSize = 40.sp)
-            }
+            HammerText()
         }
 
         if (enabledTrash) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Trash",
-                    color = MaterialTheme.colors.onPrimary,
-                    fontSize = 40.sp)
-            }
+            TrashText()
         }
         LongPressDraggable(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -283,18 +226,115 @@ fun GameScreen(navController: NavHostController) {
                         RenderRow(
                             triangles = itemsTiles.next,
                             removePiece = putPiece,
-                            onClickItem = if (enabledHammer) ::deleteColor else null
-                        )
+                            onClickItem = if (enabledHammer) ::deleteColor else null,
+                        ) {
+                            if (enabledHammer) {
+                                HammerIcon()
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                LazyRow(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                    items(listPieces) { piece ->
-                        RenderPiece(piece = piece, listPieces.indexOfFirst { it == piece }, deletePiece = if (enabledTrash) ::removePiece else null)
-                    }
+                PiecesBoard(pieces = listPieces, enabledTrash, ::removePiece)
+            }
+        }
+    }
+}
+
+@Composable
+fun HammerText() {
+    Spacer(modifier = Modifier.height(30.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            text = "Hammer",
+            color = MaterialTheme.colors.onPrimary,
+            fontSize = 40.sp)
+    }
+}
+
+@Composable
+fun TrashText() {
+    Spacer(modifier = Modifier.height(30.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            text = "Trash",
+            color = MaterialTheme.colors.onPrimary,
+            fontSize = 40.sp)
+    }
+}
+
+@Composable
+fun HammerIcon() {
+    Box {
+        Icon(painterResource(R.drawable.hammer), contentDescription = "Hammer", tint = MaterialTheme.colors.onSecondary)
+    }
+}
+
+@Composable
+fun GameScreenHeader(
+    goToHome: () -> Unit,
+    setEnableTrash: () -> Unit,
+    setEnableHammer: () -> Unit,
+    hammerCost: Int,
+    trashCost: Int
+) {
+    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = { goToHome() },
+            shape = CircleShape,
+            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
+        ) {
+            Icon(Icons.Default.Home, contentDescription = "Home", tint = MaterialTheme.colors.onSecondary)
+        }
+        Row {
+            OutlinedButton(
+                onClick = { setEnableTrash() },
+                shape = CircleShape,
+                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Default.Delete, contentDescription = "Trash", tint = MaterialTheme.colors.onSecondary)
+                    Text(
+                        text = trashCost.toString(), color = MaterialTheme.colors.onPrimary,
+                        fontSize = 10.sp
+                    )
                 }
             }
+            Spacer(modifier = Modifier.width(20.dp))
+            OutlinedButton(
+                onClick = { setEnableHammer() },
+                shape = CircleShape,
+                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.onBackground),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(painterResource(R.drawable.hammer), contentDescription = "Hammer", tint = MaterialTheme.colors.onSecondary)
+                    Text(
+                        text = hammerCost.toString(), color = MaterialTheme.colors.onPrimary,
+                        fontSize = 10.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PointsComponent(points: Int) {
+    Row {
+        Spacer(modifier = Modifier.width(20.dp))
+        Text(
+            text = points.toString(), color = MaterialTheme.colors.onPrimary,
+            fontSize = 40.sp
+        )
+    }
+}
+
+@Composable
+fun PiecesBoard(pieces: List<HexagonPiece>, enabledTrash: Boolean, removePiece: (HexagonPiece) -> Unit) {
+    LazyRow(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+        items(pieces) { piece ->
+            RenderPiece(piece = piece, pieces.indexOfFirst { it == piece }, deletePiece = if (enabledTrash) removePiece else null)
         }
     }
 }
