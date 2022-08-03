@@ -37,19 +37,19 @@ public class Box<T extends Shape, U, Sides> {
         return shape.getCurrentRotation();
     }
 
-    public void setAdjacent(String side, Box<T, U, Sides> node) {
+    public void setAdjacent(Sides side, Box<T, U, Sides> node) {
         shape.setAdjacent(side, node);
     }
 
-    public Box<T, U, Sides> getAdjacent(String side) {
+    public Box<T, U, Sides> getAdjacent(Sides side) {
         return shape.getSide(side);
     }
 
-    public ArrayList<Box<T, U, Sides>> getByRoute(ArrayList<String> path) {
+    public ArrayList<Box<T, U, Sides>> getByRoute(ArrayList<Sides> path) {
         ArrayList<Box<T, U, Sides>> list = new ArrayList<>();
         list.add(this);
         if (path.size() == 0) return list;
-        String current = path.get(0);
+        Sides current = path.get(0);
         path.remove(0);
         Box<T, U, Sides> next = shape.getSide(current);
         if (next == null) return list;
