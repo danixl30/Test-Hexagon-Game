@@ -14,7 +14,7 @@ public class HexagonBoardChecker<T extends PieceFlippable<Triangle, String, Stri
         for (int i = 1; i <= 6; i++) {
             Boolean res = piece.isFit(current);
             if (res) {
-                if (i != 1) for (int j = 1; j <= 6-i; j++) piece.flip();
+                if (i != 1) for (int j = 1; j <= 5-i; j++) piece.flip();
                 return true;
             }
             piece.flip();

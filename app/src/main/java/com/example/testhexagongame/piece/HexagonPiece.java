@@ -84,7 +84,7 @@ public class HexagonPiece implements PieceFlippable<Triangle, String, String> {
         ArrayList<String> path = new ArrayList<>();
         path.add("right");path.add("right");path.add("base");path.add("left");path.add("left");
         ArrayList<Box<Triangle, String, String>> triangles = triangle.getByRoute(path);
-        ArrayList<Integer> option = options.get(getRandom.invoke(0, options.size()-1));
+        ArrayList<Integer> option = options.get(getRandom.invoke(1, options.size())-1);
         for (int i = 0; i < option.size(); i++) {
             if (option.get(i) == 1) triangles.get(i).setData(color);
         }
@@ -94,6 +94,7 @@ public class HexagonPiece implements PieceFlippable<Triangle, String, String> {
     public void create() {
         setTriangleCol();
         setColor();
+        for(int c = 0; c < getRandom.invoke(0, 6); c++) flip();
     }
 
     @Override
