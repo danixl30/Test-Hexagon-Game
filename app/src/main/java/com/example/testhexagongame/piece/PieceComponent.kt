@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.testhexagongame.dragAndDrop.DragTarget
-import com.example.testhexagongame.tiles.tile.RenderTriangle2
+import com.example.testhexagongame.tiles.tile.RenderTriangle
 
 @Composable
 fun RenderPiece(piece: HexagonPiece, position: Int, deletePiece: ((HexagonPiece) -> Unit)?) {
@@ -18,21 +18,21 @@ fun RenderPiece(piece: HexagonPiece, position: Int, deletePiece: ((HexagonPiece)
             modifier = Modifier.clickable { if (deletePiece == null) piece.flip() else deletePiece(piece)}
         ) {
             Row() {
-                RenderTriangle2(piece.triangles!!, null)
-                RenderTriangle2(piece.triangles?.getAdjacent("right")!!, null)
-                RenderTriangle2(
+                RenderTriangle(piece.triangles!!, null)
+                RenderTriangle(piece.triangles?.getAdjacent("right")!!, null)
+                RenderTriangle(
                     piece.triangles?.getAdjacent("right")?.getAdjacent("right")!!,
                     null,
                 )
             }
             Spacer(modifier = Modifier.height(14.dp))
             Row() {
-                RenderTriangle2(piece.triangles?.getAdjacent("base")!!, null)
-                RenderTriangle2(
+                RenderTriangle(piece.triangles?.getAdjacent("base")!!, null)
+                RenderTriangle(
                     piece.triangles?.getAdjacent("base")?.getAdjacent("right")!!,
                     null,
                 )
-                RenderTriangle2(
+                RenderTriangle(
                     piece.triangles?.getAdjacent("base")?.getAdjacent("right")?.getAdjacent("right")!!,
                     null,
                 )

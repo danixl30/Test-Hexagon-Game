@@ -17,7 +17,7 @@ import com.example.testhexagongame.tiles.tile.Shape.Triangle
 import com.example.testhexagongame.utils.parseColor
 
 @Composable
-fun RenderTriangle2(
+fun RenderTriangle(
     triangle: Box<Triangle, String, String>,
     triangleInsideIcon: @Composable() (BoxScope.() -> Unit)?,
 ) {
