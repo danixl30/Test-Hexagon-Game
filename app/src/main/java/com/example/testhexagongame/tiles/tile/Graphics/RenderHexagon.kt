@@ -25,6 +25,7 @@ fun RenderRow(
     while (triangles.hasNext()) {
         val triangle = triangles.next
         DropTarget<HexagonPiece>(modifier = Modifier) { isInBound, data, isInverted ->
+            if (data != null) println(isInverted)
             if (isInBound && data != null && data.putPiece(triangle, if (isInverted) 0 else 180)){
                 removePiece(data)
             }

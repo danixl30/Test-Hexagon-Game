@@ -35,13 +35,14 @@ fun <T> DragTarget(
                 currentState.isDragging = true
                 currentState.isElement = false
                 currentState.elIndex = elPos
+                println(it)
                 currentState.dragPosition = currentPosition + it
                 currentState.draggableComposable = content
             }, onDrag = { change, dragAmount ->
+                if (dragAmount.x > 1 || dragAmount.x < -1 || dragAmount.y > 1 || dragAmount.y < -1) currentState.offsetZone = Offset.Zero
                 currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
-                if (dragAmount.x > 1 || dragAmount.x < -1 || dragAmount.y > 1 || dragAmount.y < -1) currentState.offsetZone = Offset(0f, -300f)
                 change.consumeAllChanges()
-                currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+                currentState.dragOffset += Offset(dragAmount.x, (dragAmount.y * 1.5).toFloat())
             }, onDragEnd = {
                 currentState.subscribers.keys.forEach { e -> currentState.subscribers[e] = 0 }
                 currentState.isDragging = false

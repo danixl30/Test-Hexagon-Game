@@ -14,6 +14,6 @@ internal class DragTargetInfo {
     var dataToDrop by mutableStateOf<Any?>(null)
     var elIndex by mutableStateOf(0)
     var isElement by mutableStateOf(value = false)
-    var offsetZone by mutableStateOf(Offset(0f, -300f))
+    var offsetZone by mutableStateOf(Offset(0f, 0f))
     var subscribers = mutableMapOf<String, Int>()
 }

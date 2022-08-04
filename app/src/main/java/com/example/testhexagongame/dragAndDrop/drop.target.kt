@@ -28,11 +28,11 @@ fun <T> DropTarget(
 
     Box(modifier = modifier.onGloballyPositioned {
         it.boundsInWindow().let { rect ->
-            isCurrentDropTarget = rect.contains(dragPosition + dragOffset + if (dragInfo.isDragging) dragInfo.offsetZone else Offset(0f, 0f))
+            isCurrentDropTarget = rect.contains(dragPosition + dragOffset + dragInfo.offsetZone)
             if (isCurrentDropTarget) dragInfo.subscribers[id] = 2
             else dragInfo.subscribers[id] = 1
             if (!dragInfo.subscribers.containsValue(0) && !dragInfo.subscribers.containsValue(2)) {
-                dragInfo.offsetZone = Offset(0f, -170f)
+                dragInfo.offsetZone = Offset(0f, 100f)
                 dragInfo.subscribers.keys.forEach { e -> dragInfo.subscribers[e] = 0 }
             }
         }
@@ -40,6 +40,6 @@ fun <T> DropTarget(
         var data =
             if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as T? else null
         if (isCurrentDropTarget && !dragInfo.isDragging && data != dragInfo.dataToDrop) data = dragInfo.dataToDrop as T? else null
-        content(isCurrentDropTarget, data, dragInfo.offsetZone == Offset(0f, -170f))
+        content(isCurrentDropTarget, data, dragInfo.offsetZone == Offset(0f, 100f))
     }
 }
