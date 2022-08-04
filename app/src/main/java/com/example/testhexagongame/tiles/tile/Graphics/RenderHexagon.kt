@@ -29,8 +29,7 @@ fun RenderRow(
                 removePiece(data)
             }
             Box(modifier = if (onClickItem == null)
-                if (!isInBound) Modifier
-                else Modifier.background(Color.Red) else Modifier.clickable { onClickItem(triangle) }) {
+                Modifier else Modifier.clickable { onClickItem(triangle) }) {
                 RenderTriangle2(triangle, if (triangle.data != GRAY_BASE) triangleInsideIcon else null)
             }
         }
